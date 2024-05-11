@@ -1,0 +1,12 @@
+---
+- name: Get ARP information            # Describes the purpose of this Ansible playbook.
+  hosts: all                           # Specifies that this playbook should run on all hosts.
+  gather_facts: false                 # Instructs Ansible not to gather facts about the hosts.
+
+  tasks:
+    - name: show arp                   # Describes the task to show ARP information.
+      raw: "show arp"                 # Executes the "show arp" command on the hosts.
+
+      register: print_output          # Registers the output of the command in a variable called print_output.
+
+    - debug: var=print_output.stdout_lines  # Displays the stdout lines (output) of the command.

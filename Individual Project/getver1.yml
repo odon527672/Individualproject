@@ -1,0 +1,23 @@
+---
+# This is a YAML document specifying an Ansible playbook.
+# It defines a set of tasks to be executed on all hosts, with specific commands to run.
+
+# The playbook is named "show version and other user level commands"
+- name: show version and other user level commands
+  hosts: all
+  gather_facts: false  # This specifies that Ansible should not gather facts about the hosts before running tasks.
+  connection: local    # This specifies that the connection to the hosts should be made locally.
+
+  tasks:  # This section defines the list of tasks to be executed on the hosts.
+
+    # This task is named "run multiple commands on remote nodes".
+    - name: run multiple commands on remote nodes
+      ios_command:  # This is a Ansible module used to execute commands on Cisco IOS devices.
+        commands:   # This specifies the list of commands to be executed on the remote nodes.
+          - show version  # This command is used to display the system hardware and software version.
+          - show ip int brief  # This command is used to display a summary of IP interfaces and their status.
+
+      register: print_output  # This saves the output of the commands into a variable named "print_output".
+
+    # This task is named "debug" and it prints the output of the commands executed in the previous task.
+    - debug: var=print_output.stdout_lines  # This prints the "stdout_lines" attribute of the "print_output" variable.

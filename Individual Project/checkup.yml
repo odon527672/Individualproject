@@ -1,0 +1,33 @@
+---
+# Playbook to perform health check on hosts in group S5
+# It gathers facts for the hosts but does not do so in this case (false)
+# Connects to hosts locally
+- name: Health Check Playbook
+  hosts: S5
+  gather_facts: false
+  connection: local
+
+  tasks:
+    # Task to execute 'show interfaces' command on the hosts
+    - name: Execute show interfaces command
+      ios_command:
+        commands:
+          - show interfaces
+      register: show_interfaces_output
+
+    # Task to debug/print the output of 'show interfaces' command
+    - name: Analyze show interfaces output
+      debug:
+        msg: "{{ show_interfaces_output.stdout }}"
+
+    # Task to execute 'show ip bgp summary' command on the hosts
+    - name: Execute show ip bgp summary command
+      ios_command:
+        commands:
+          - show ip bgp summary
+      register: show_bgp_summary_output
+
+    # Task to debug/print the output of 'show ip bgp summary' command
+    - name: Analyze show ip bgp summary output
+      debug:
+        msg: "{{ show_bgp_summary_output.stdout }}"

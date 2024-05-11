@@ -1,0 +1,26 @@
+---
+# Ansible playbook to backup the running configuration (show run) of all hosts in the inventory
+
+# Define the playbook
+- name: Backup show run (enable mode commands)  # Name of the playbook
+  hosts: all  # Target all hosts defined in the inventory
+  gather_facts: false  # Disable gathering facts about the hosts
+  connection: local  # Connect to the hosts locally, not over the network
+
+  tasks:
+    # Task to run enable level commands on each device
+    - name: run enable level commands  # Name of the task
+      ios_command:  # Module to execute IOS commands on Cisco devices
+        commands:  # List of commands to execute
+          - show run  # Command to display the running configuration
+
+      register: print_output  # Register the output of the command for later use
+
+    # Task to display the output of the previous command
+    - debug: var=print_output.stdout_lines  # Display the stdout lines of the command output
+
+    # Task to save the output to a file
+    - name: save output to a file  # Name of the task
+      copy:  # Module to copy files
+        content="{{ print_output.stdout[0] }}"  # Content to be written to the file (running configuration)
+        dest: "./output/{{ inventory_hostname }}.txt"  # Destination path for the file, using the hostname of the device

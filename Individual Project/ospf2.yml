@@ -1,0 +1,39 @@
+---
+# This playbook manages devices in GNS3, specifically IOS devices.
+
+# First task: enable OSPF on GNS3 IOS devices
+- name: Manage GNS3 devices
+  hosts: gns3-ios
+  gather_facts: false
+  connection: local
+
+  tasks:
+    # This task enables OSPF on the routers
+    - name: enable ospf
+      ios_config:  # This module is used to send configuration commands to IOS devices
+        parents: router ospf 1  # Configures OSPF process ID 1
+        lines:
+          - network 0.0.0.0 255.255.255.255 area 0  # Specifies the networks to participate in OSPF
+
+      register: print_output  # Registers the output of the command for later use
+
+    # This task prints the output of the previous task
+    - debug: var=print_output
+
+# Second task: Switch specific configuration
+- name: Switch specific config
+  hosts: S1, S2  # This playbook applies to hosts named S1 and S2
+  gather_facts: false
+  connection: local
+
+  tasks:
+    # This task creates VLANs on the switches
+    - name: Create VLANs
+      ios_config:  # This module is used to send configuration commands to IOS devices
+        lines:
+          - vlan 2-10  # Creates VLANs 2 through 10
+
+      register: print_output  # Registers the output of the command for later use
+
+    # This task prints the output of the previous task
+    - debug: var=print_output

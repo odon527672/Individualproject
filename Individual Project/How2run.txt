@@ -1,0 +1,72 @@
+playbooks
+
+1
+
+ansible-playbook getarp1.yml -u odon -k 
+
+ansible-playbook getarp1.yml -u odon -k | grep 'ok:\|c933'
+
+ansible-playbook getarp1.yml -u odon -k | grep 'ok:\|.3'
+
+2
+
+ansible-playbook getmacaddress1.yml -u odon -k 
+
+ansible-playbook getmacaddress1.yml -u odon -k | grep c933
+
+3
+
+ansible-playbook getver1.yml -u odon -k 
+
+4
+
+ansible-playbook getver2.yml -u odon -k 
+
+go to cd output
+
+5
+
+ansible-playbook getrun.yml -u odon -k 
+
+OSPF Playbook
+
+ansible-playbook ospf.yml -u odon -k
+
+in router: sh ip protocols & sh ip ospf int brief
+
+ 
+
+OSPF2 Playbook → configs ospf and vlans for switches
+
+vtp mode transparent (to show in running config “sh run”) 
+
+Campus Configurations (video 36) [ playbook made for cisco reccomended config]
+
+ansible-playbook campusconf.yml -u odon -k
+
+sh run | i snmp
+
+Campusconf-2 → includes ipv6 neighbour discovery protocol
+
+ansible-playbook campusconf2.yml -u odon -k
+
+sh run | i ipv6
+
+Configures interface settings including:
+
+(Configure client connectivity, Conf switchport host, ARP inspection)
+
+ansible-playbook campusconf3.yml -u odon -k
+
+sh run int g1/0 (g1/2/3/4)
+
+Configures all of the above on the access switches, and only compusconf1 for the core switches
+
+ansible-playbook campusconfall.yml -u odon -k
+
+sh run
+
+
+ansible-playbook backup.yml -u odon -k 
+ansible-playbook checkup.yml -u odon -k 
+

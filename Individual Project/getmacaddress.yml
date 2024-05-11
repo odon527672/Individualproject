@@ -1,0 +1,23 @@
+---
+# The name of the playbook, describing its purpose.
+- name: Get MAC information
+
+  # Specifies the hosts on which the playbook should be executed.
+  hosts: all
+
+  # Indicates whether facts about the hosts should be gathered.
+  gather_facts: false
+
+  # Defines the tasks to be performed.
+  tasks:
+    # A task to show the MAC address table.
+    - name: show mac address table
+
+      # Executes the specified command on the remote host.
+      raw: "show mac address-table"
+
+      # Stores the output of the command in a variable named "print_output".
+      register: print_output
+
+    # Displays the output of the previous task.
+    - debug: var=print_output.stdout_lines

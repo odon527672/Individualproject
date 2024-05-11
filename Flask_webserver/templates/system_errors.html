@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Errors</title>
+</head>
+<body>
+    <h1>Windows System Errors</h1>
+    <ul>
+    {% for event in events %}
+        <li>
+            <strong>Time Generated:</strong> {{ event['TimeGenerated'] }}<br>
+            <strong>Source Name:</strong> {{ event['SourceName'] }}<br>
+            <strong>Event ID:</strong> {{ event['EventID'] }}<br>
+            <strong>Event Type:</strong> {{ event['EventType'] }}<br>
+            <strong>String Inserts:</strong> {{ event['StringInserts'] }}<br>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

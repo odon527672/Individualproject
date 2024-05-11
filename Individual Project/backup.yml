@@ -1,0 +1,20 @@
+---
+# Playbook name and target hosts
+- name: Backup Configuration Playbook
+  hosts: S5
+  gather_facts: false  # Skipping gathering facts about hosts
+  connection: local    # Connecting locally to the control machine
+
+  tasks:
+    # Task to execute the 'show running-config' command on the target device
+    - name: Execute show running-config command
+      ios_command:  # Using ios_command module to run IOS commands
+        commands:   # List of commands to execute
+          - show running-config
+      register: config_output  # Storing the output of the command in a variable named config_output
+
+    # Task to save the configuration output to a file
+    - name: Save configuration to file
+      copy:  # Using the copy module to save files
+        content: "{{ config_output.stdout[0] }}"  # Content to be written to the file, using the output stored in config_output
+        dest: "./backup/{{ inventory_hostname }}_running_config.txt"  # Destination path for the backup file, including the hostname of the target device

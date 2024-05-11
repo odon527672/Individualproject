@@ -1,0 +1,19 @@
+- name: Backup show version and other user level commands  # Name of the playbook, describes its purpose
+  hosts: all  # Target hosts for the playbook, 'all' means it applies to all hosts in the inventory
+  gather_facts: false  # Tells Ansible not to gather facts about the hosts before running tasks
+  connection: local  # Specifies that the tasks will be executed locally on the Ansible control node
+
+  tasks:
+    - name: show version  # Name of the task, describes what it does
+      ios_command:  # Ansible module for executing IOS commands on network devices
+        commands:  # List of IOS commands to execute
+          - show version  # Command to show version information of the device
+
+      register: print_output  # Registers the output of the command for later use
+
+    - debug: var=print_output.stdout_lines  # Prints the standard output of the command executed in the previous task
+
+    - name: save output to a file  # Name of the task, describes what it does
+      copy:  # Ansible module for copying files
+        content="{{ print_output.stdout[0] }}"  # Content to be copied, which is the output of the 'show version' command
+        dest="./output/{{ inventory_hostname }}.txt"  # Destination path for the copied file, includes hostname in the filename

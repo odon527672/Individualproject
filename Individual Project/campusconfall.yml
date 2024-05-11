@@ -1,0 +1,125 @@
+---
+# Define a playbook named "Cisco Wired Campus Design - Access"
+- name: Cisco Wired Campus Design - Access
+  # Specify the hosts where this playbook will run
+  hosts: gns3-access
+  # Disable gathering facts about the hosts
+  gather_facts: false
+  # Use a local connection to the hosts
+  connection: local
+
+  # Define a list of tasks to be executed
+  tasks:
+    # Task to apply global configuration settings
+    - name: Global config settings
+      # Use the ios_config module to send configuration commands to IOS devices
+      ios_config:
+        # Configuration lines to be applied
+        lines:
+          - vtp mode transparent
+          - spanning-tree mode rapid-pvst
+          - udld enable
+          - errdisable recovery cause all
+          - port-channel load-balance src-dst-ip
+          - ip name-server 8.8.8.8
+          - no ip http server
+          - ip http secure-server
+          - snmp-server community python1 RO
+          - snmp-server community python2 RW
+          - ntp server 87.81.181.2
+          - ntp update-calendar
+          - clock timezone PST -8
+          - clock summer-time PDT recurring
+          - service timestamps debug datetime msec localtime
+          - service timestamps log datetime msec localtime
+          - "vlan 1,10,20,30,40,50"
+          - ip default-gateway 192.168.122.1
+          - "ip dhcp snooping vlan 100,101"
+          - no ip dhcp snooping information option
+          - ip dhcp snooping
+          - "ip arp inspection vlan 100,101"
+          - spanning-tree portfast bpduguard default
+      # Store the output of the task in a variable
+      register: print_output
+
+    # Task to print the output of the previous task
+    -  debug: var=print_output
+
+    # Task to configure interface settings
+    - name: Interface settings
+      ios_config:
+        # Specify the parent interface for the configuration
+        parents: "interface {{ item.interface }}"
+        # Configuration lines for the interface
+        lines:
+          - "switchport access vlan {{ item.vlan }}"
+          - "switchport voice vlan {{ item.voice_vlan }}"
+          - switchport host
+          - switchport port-security maximum 2
+          - switchport port-security
+          - switchport port-security aging time 2
+          - switchport port-security aging type inactivity
+          - switchport port-security violation restrict
+          - ip arp inspection limit rate 100
+          - ip dhcp snooping limit rate 100
+          - ip verify source
+        # Commands to be executed after the configuration lines
+        after:
+          - no shutdown
+      # Specify a list of interface configurations
+      with_items:
+        - { interface : GigabitEthernet1/0, vlan : 100, voice_vlan : 101 }
+        - { interface : GigabitEthernet1/1, vlan : 10, voice_vlan : 101 }
+        - { interface : GigabitEthernet1/2, vlan : 20, voice_vlan : 101 }
+        - { interface : GigabitEthernet1/3, vlan : 30, voice_vlan : 101 }
+      # Store the output of the task in a variable
+      register: print_output
+
+    # Task to print the output of the previous task
+    -  debug: var=print_output
+
+# Define another playbook named "Cisco Wired Campus Design - Core"
+- name: Cisco Wired Campus Design - Core
+  # Specify the hosts where this playbook will run
+  hosts: gns3-core
+  # Disable gathering facts about the hosts
+  gather_facts: false
+  # Use a local connection to the hosts
+  connection: local
+
+  # Define a list of tasks to be executed
+  tasks:
+    # Task to apply global configuration settings (similar to the previous playbook)
+    - name: Global config settings
+      ios_config:
+        lines:
+          - vtp mode transparent
+          - spanning-tree mode rapid-pvst
+          - udld enable
+          - errdisable recovery cause all
+          - port-channel load-balance src-dst-ip
+          - ip name-server 8.8.8.8
+          - no ip http server
+          - ip http secure-server
+          - snmp-server community python1 RO
+          - snmp-server community python2 RW
+          - ntp server 87.81.181.2
+          - ntp update-calendar
+          - clock timezone PST -8
+          - clock summer-time PDT recurring
+          - service timestamps debug datetime msec localtime
+          - service timestamps log datetime msec localtime
+          - "vlan 1,10,20,30,40,50"
+          - ip default-gateway 192.168.122.1
+          - "ip dhcp snooping vlan 100,101"
+          - no ip dhcp snooping information option
+          - ip dhcp snooping
+          - "ip arp inspection vlan 100,101"
+          - spanning-tree portfast bpduguard default
+      # Store the output of the task in a variable
+      register: print_output
+
+    # Task to print the output of the previous task
+    -  debug: var=print_output
+
+
